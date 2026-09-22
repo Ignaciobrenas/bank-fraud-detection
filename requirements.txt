@@ -1,0 +1,13 @@
+pandas
+pyarrow
+pyspark
+faker
+numpy
+scikit-learn
+lightgbm
+imbalanced-learn
+streamlit
+plotly
+pyyaml
+pytest
+joblib

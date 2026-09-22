@@ -1,0 +1,16 @@
+seed: 42
+realtime_threshold_seconds: 2
+n_customers: 50000
+n_history_transactions: 2000000
+n_stream_transactions: 500000
+fraud_rate: 0.01
+history_start: "2026-01-01"
+history_end: "2026-06-30"
+stream_start: "2026-07-01"
+stream_end: "2026-07-31"
+paths:
+  raw: "data/raw"
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  archive: "data/archive"
