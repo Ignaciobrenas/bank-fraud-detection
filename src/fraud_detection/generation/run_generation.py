@@ -3,13 +3,14 @@ import numpy as np
 from faker import Faker
 import json
 import os
-from src.fraud_detection.config import CONFIG
+from src.fraud_detection.config import CONFIG, logger
 
 fake = Faker()
 Faker.seed(CONFIG["seed"])
 np.random.seed(CONFIG["seed"])
 
 def generate_all():
+    logger.info("Starting synthetic data generation...")
     raw_path = CONFIG["paths"]["raw"]
     os.makedirs(raw_path, exist_ok=True)
     
@@ -141,7 +142,7 @@ def generate_all():
             "resolution": "confirmed"
         })
     pd.DataFrame(alerts).to_csv(f"{raw_path}/previous_fraud_alerts.csv", index=False)
-    print("Generation complete!")
+    logger.info("Generation complete!")
 
 if __name__ == "__main__":
     generate_all()

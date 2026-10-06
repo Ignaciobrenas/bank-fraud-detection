@@ -1,19 +1,20 @@
 import os
 import pandas as pd
 import joblib
-from src.fraud_detection.config import CONFIG
+from src.fraud_detection.config import CONFIG, logger
 
 def run_consumer():
+    logger.info("Starting Streaming Consumer...")
     raw_path = CONFIG["paths"]["raw"]
     
     if not os.path.exists(f"{raw_path}/transactions.csv"):
-        print("No stream transactions found.")
+        logger.error("No stream transactions found.")
         return
         
     df_stream = pd.read_csv(f"{raw_path}/transactions.csv")
     
     if not os.path.exists("models/lgbm_model.pkl"):
-        print("Model not found. Run train.py first.")
+        logger.error("Model not found. Run train.py first.")
         return
         
     clf = joblib.load("models/lgbm_model.pkl")
@@ -37,7 +38,7 @@ def run_consumer():
     
     os.makedirs("data", exist_ok=True)
     alerts.to_parquet("data/alerts.parquet", index=False)
-    print("Streaming consumer generated alerts.parquet")
+    logger.info("Streaming consumer generated alerts.parquet")
 
 if __name__ == "__main__":
     run_consumer()

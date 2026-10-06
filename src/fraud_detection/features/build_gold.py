@@ -2,9 +2,10 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, mean, stddev
 from pyspark.sql.window import Window
-from src.fraud_detection.config import CONFIG
+from src.fraud_detection.config import CONFIG, logger
 
 def run_build_gold():
+    logger.info("Starting Gold layer feature engineering...")
     spark = SparkSession.builder \
         .appName("BankFraud_BuildGold") \
         .master("local[*]") \
@@ -14,7 +15,7 @@ def run_build_gold():
     gold_path = CONFIG["paths"]["gold"]
     
     if not os.path.exists(f"{silver_path}/transactions"):
-        print("No transactions in Silver. Run build_silver first.")
+        logger.error("No transactions in Silver. Run build_silver first.")
         return
         
     df_tx = spark.read.parquet(f"{silver_path}/transactions")
@@ -36,7 +37,7 @@ def run_build_gold():
         df_gold = df_gold.join(df_cust, on="customer_id", how="left")
         
     df_gold.write.mode("overwrite").parquet(f"{gold_path}/features")
-    print("Gold layer build completed.")
+    logger.info("Gold layer build completed.")
     spark.stop()
 
 if __name__ == "__main__":

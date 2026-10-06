@@ -25,5 +25,9 @@ test:
 stream:
 	python -m src.fraud_detection.streaming.consumer
 
-all: generate bronze silver gold train
+run:
+	python main.py
+
+all: run
+
 

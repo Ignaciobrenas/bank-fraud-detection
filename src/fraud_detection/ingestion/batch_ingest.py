@@ -2,9 +2,10 @@ import os
 from datetime import datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit, col, to_date
-from src.fraud_detection.config import CONFIG
+from src.fraud_detection.config import CONFIG, logger
 
 def run_batch_ingest():
+    logger.info("Starting batch ingestion to Bronze...")
     spark = SparkSession.builder \
         .appName("BankFraud_BatchIngest_Bronze") \
         .master("local[*]") \
@@ -45,7 +46,7 @@ def run_batch_ingest():
                              .withColumn("schema_version", lit("1.0.0"))
         df_alerts.write.mode("overwrite").parquet(f"{bronze_path}/previous_fraud_alerts")
 
-    print("Batch ingestion to Bronze completed.")
+    logger.info("Batch ingestion to Bronze completed.")
     spark.stop()
 
 if __name__ == "__main__":

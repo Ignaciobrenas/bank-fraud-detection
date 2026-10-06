@@ -1,9 +1,10 @@
 import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, abs
-from src.fraud_detection.config import CONFIG
+from src.fraud_detection.config import CONFIG, logger
 
 def run_build_silver():
+    logger.info("Starting Silver layer processing...")
     spark = SparkSession.builder \
         .appName("BankFraud_BuildSilver") \
         .master("local[*]") \
@@ -14,17 +15,20 @@ def run_build_silver():
     
     # 1. Clean Customers
     if os.path.exists(f"{bronze_path}/customer_profile"):
+        logger.info("Cleaning customer profiles...")
         df_cust = spark.read.parquet(f"{bronze_path}/customer_profile")
         df_cust = df_cust.dropDuplicates(["customer_id"])
         df_cust.write.mode("overwrite").parquet(f"{silver_path}/customer_profile")
     
     # 2. Clean Devices
     if os.path.exists(f"{bronze_path}/device_data"):
+        logger.info("Cleaning device data...")
         df_dev = spark.read.parquet(f"{bronze_path}/device_data")
         df_dev = df_dev.dropDuplicates(["device_id"])
         df_dev.write.mode("overwrite").parquet(f"{silver_path}/device_data")
     
     # 3. Clean Transactions
+    logger.info("Cleaning transactions...")
     df_all_tx = None
     if os.path.exists(f"{bronze_path}/transaction_history"):
         df_hist = spark.read.parquet(f"{bronze_path}/transaction_history")
@@ -45,13 +49,13 @@ def run_build_silver():
         # Run Data Quality Checks
         from src.fraud_detection.processing.quality_checks import run_all_checks
         if not run_all_checks(df_all_tx):
-            print("WARNING: Data quality checks failed for Silver transactions!")
+            logger.warning("Data quality checks failed for Silver transactions!")
         else:
-            print("SUCCESS: All data quality checks passed for Silver transactions.")
+            logger.info("All data quality checks passed for Silver transactions.")
             
         df_all_tx.write.mode("overwrite").parquet(f"{silver_path}/transactions")
     
-    print("Silver layer build completed.")
+    logger.info("Silver layer build completed.")
     spark.stop()
 
 if __name__ == "__main__":
