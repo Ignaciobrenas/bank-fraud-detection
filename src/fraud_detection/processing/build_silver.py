@@ -41,6 +41,14 @@ def run_build_silver():
         df_all_tx = df_all_tx.dropDuplicates(["transaction_id"])
         df_all_tx = df_all_tx.withColumn("amount", abs(col("amount")))
         df_all_tx = df_all_tx.na.drop(subset=["customer_id", "amount", "event_timestamp"])
+        
+        # Run Data Quality Checks
+        from src.fraud_detection.processing.quality_checks import run_all_checks
+        if not run_all_checks(df_all_tx):
+            print("WARNING: Data quality checks failed for Silver transactions!")
+        else:
+            print("SUCCESS: All data quality checks passed for Silver transactions.")
+            
         df_all_tx.write.mode("overwrite").parquet(f"{silver_path}/transactions")
     
     print("Silver layer build completed.")

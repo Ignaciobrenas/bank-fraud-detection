@@ -19,4 +19,11 @@ gold:
 train:
 	python -m src.fraud_detection.models.train
 
+test:
+	python -m pytest tests/ -v
+
+stream:
+	python -m src.fraud_detection.streaming.consumer
+
 all: generate bronze silver gold train
+

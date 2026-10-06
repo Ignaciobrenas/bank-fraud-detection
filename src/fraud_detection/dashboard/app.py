@@ -36,5 +36,13 @@ if os.path.exists(alerts_path):
     st.subheader("Recent Alerts")
     st.dataframe(df[df["is_alert"] == 1].sort_values("event_timestamp", ascending=False).head(100))
     
+    # Feature Importance
+    fi_path = "models/feature_importance.csv"
+    if os.path.exists(fi_path):
+        st.markdown("---")
+        st.subheader("Model Feature Importance")
+        df_fi = pd.read_csv(fi_path)
+        st.bar_chart(data=df_fi, x="feature", y="importance")
+        
 else:
     st.warning("No alerts.parquet found. Please run the pipeline (`make stream`) first.")

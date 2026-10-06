@@ -39,6 +39,14 @@ def run_train():
     print(classification_report(y_test, y_pred))
     print(f"PR-AUC: {average_precision_score(y_test, y_prob):.4f}")
     
+    # Save Feature Importance
+    importance_df = pd.DataFrame({
+        "feature": features,
+        "importance": clf.feature_importances_
+    }).sort_values("importance", ascending=False)
+    importance_df.to_csv("models/feature_importance.csv", index=False)
+    print("Feature importance saved to models/feature_importance.csv")
+    
     os.makedirs("models", exist_ok=True)
     joblib.dump(clf, "models/lgbm_model.pkl")
     print("Model saved to models/lgbm_model.pkl")
