@@ -11,3 +11,5 @@ plotly
 pyyaml
 pytest
 joblib
+fastapi
+uvicorn

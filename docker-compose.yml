@@ -10,6 +10,17 @@ services:
       - ./models:/app/models
     command: python main.py
 
+  api:
+    build: .
+    container_name: fraud_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+    command: uvicorn src.fraud_detection.api.serve:app --host 0.0.0.0 --port 8000
+    depends_on:
+      - pipeline
+
   dashboard:
     build: .
     container_name: fraud_dashboard
@@ -20,4 +31,5 @@ services:
       - ./models:/app/models
     command: streamlit run src/fraud_detection/dashboard/app.py --server.address=0.0.0.0
     depends_on:
-      - pipeline
+      - api
+

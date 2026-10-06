@@ -25,8 +25,12 @@ test:
 stream:
 	python -m src.fraud_detection.streaming.consumer
 
+api:
+	uvicorn src.fraud_detection.api.serve:app --host 0.0.0.0 --port 8000
+
 run:
 	python main.py
+
 
 all: run
 
