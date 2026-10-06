@@ -1,8 +1,8 @@
-.PHONY: setup generate bronze silver gold train stream kpi dashboard test
+.PHONY: setup generate bronze silver gold train test all
 
 setup:
-	python -m venv .venv
-	.venv/Scripts/pip install -r requirements.txt
+	python -m pip install -r requirements.txt
+	python -m pytest tests/
 
 generate:
 	python -m src.fraud_detection.generation.run_generation
@@ -19,14 +19,4 @@ gold:
 train:
 	python -m src.fraud_detection.models.train
 
-stream:
-	python -m src.fraud_detection.streaming.consumer
-
-kpi:
-	python -m src.fraud_detection.analysis.kpi
-
-dashboard:
-	streamlit run src/fraud_detection/dashboard/app.py
-
-test:
-	pytest -q
+all: generate bronze silver gold train
