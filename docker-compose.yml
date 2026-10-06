@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  pipeline:
+    build: .
+    container_name: fraud_pipeline
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+    command: python main.py
+
+  dashboard:
+    build: .
+    container_name: fraud_dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    command: streamlit run src/fraud_detection/dashboard/app.py --server.address=0.0.0.0
+    depends_on:
+      - pipeline

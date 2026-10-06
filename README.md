@@ -98,3 +98,12 @@ make test
 
 El flujo de vida del dato desde su origen hasta el panel de negocio es el siguiente:
 `data/raw/*.csv` ➔ `batch_ingest` ➔ `data/bronze/` ➔ `build_silver` ➔ `data/silver/` ➔ `build_gold` ➔ `data/gold/features` ➔ `train` ➔ `models/lgbm_model.pkl` ➔ `consumer` ➔ `alerts.parquet` ➔ `dashboard`.
+
+## 🐳 Dockerization & CI/CD
+Para garantizar que el entorno sea completamente reproducible y robusto (Enterprise-Ready):
+- **Docker & Docker Compose**: Se ha añadido un \Dockerfile\ y un \docker-compose.yml\ que levantan tanto el pipeline de datos (\main.py\) como el Dashboard de Streamlit sin tener que instalar Java ni dependencias localmente.
+  - Comando: \docker-compose up --build\
+- **GitHub Actions**: Se ha añadido un flujo de Integración Continua (CI) en \.github/workflows/ci.yml\ que ejecuta comprobaciones y los tests unitarios automáticamente en cada _Push_ o _Pull Request_.
+- **Pre-commit**: Se usan ganchos (hooks) automáticos configurados en \.pre-commit-config.yaml\ para bloquear subidas de archivos masivos o código mal formateado (integrando _Ruff_).
+- **Quality Checks & Logs**: Hay un sistema robusto de aserciones en \quality_checks.py\ (que aborta si hay nulos en variables clave de negocio) y se exportan _Logs_ centralizados en la carpeta \logs/\ para total observabilidad y trazabilidad.
+
